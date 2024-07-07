@@ -6,9 +6,15 @@ public static class CorsConfiguration
     {
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", builder =>
+            // options.AddPolicy("AllowAll", builder =>
+            // {
+            //     builder.AllowAnyOrigin()
+            //            .AllowAnyHeader()
+            //            .AllowAnyMethod();
+            // });
+            options.AddDefaultPolicy(builder =>
             {
-                builder.AllowAnyOrigin()
+                builder.WithOrigins("http://localhost:3000/")
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
