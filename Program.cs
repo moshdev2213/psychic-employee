@@ -18,7 +18,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// the default cors option
 app.UseCors();
+// defined cors option
+// app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
