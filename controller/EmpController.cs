@@ -9,71 +9,61 @@ namespace Api_2._0;
 public class EmpController : ControllerBase
 {
 
-    private readonly AppDbContext dbContext;
+    private readonly IEmpService _empService;
 
-    public EmpController(AppDbContext appDbContext)
+    public EmpController(IEmpService empService)
     {
-        dbContext = appDbContext;
+        _empService = empService;
     }
 
     [HttpGet]
     public IActionResult GetAllEmp()
     {
-        var allEmp = dbContext.Employees.ToList();
+        var allEmp = _empService.GetAllEmp();
         return Ok(allEmp);
     }
 
     [HttpGet]
     [Route("{id:int}")]
-    public IActionResult getEmpById(int id){
-        var employee = dbContext.Employees.Find(id);
-        if(employee is null){
+    public IActionResult GetEmpById(int id)
+    {
+        var employee = _empService.GetEmpById(id);
+        if (employee is null)
+        {
             return NotFound("Employee Not Found");
         }
         return Ok(employee);
     }
 
     [HttpPost]
-    public IActionResult AddEmp(AddEmpDto addEmpDto){
-        var employeeEntity = new Employee() {
-            Name = addEmpDto.Name,
-            Email = addEmpDto.Email,
-            Phone = addEmpDto.Phone,
-            Salary = addEmpDto.Salary
-        };
-        dbContext.Employees.Add(employeeEntity);
-        dbContext.SaveChanges();
-
-        return Ok(employeeEntity);
+    public IActionResult AddEmp(AddEmpDto addEmpDto)
+    {
+        var addedEmp = _empService.AddEmp(addEmpDto);
+        return Ok(addedEmp);
     }
 
     [HttpPut]
     [Route("{id;int}")]
-    public IActionResult UpdateEmp(int id , UpdateEmpDto updateEmpDto){
-        var employee = dbContext.Employees.Find(id);
-        if(employee is null){
+    public IActionResult UpdateEmp(int id, UpdateEmpDto updateEmpDto)
+    {
+        var updatedEmp = _empService.UpdateEmp(id, updateEmpDto);
+        if (updatedEmp == null)
+        {
             return NotFound();
         }
-        employee.Name = updateEmpDto.Name;
-        employee.Email = updateEmpDto.Email;
-        employee.Phone = updateEmpDto.Phone;
-        employee.Salary = updateEmpDto.Salary;
-
-        dbContext.SaveChanges();
-        return Ok(employee);
+        return Ok(updatedEmp);
     }
 
     [HttpDelete]
     [Route("{id:int}")]
-    public IActionResult deleteEmp(int id){
-        var employee = dbContext.Employees.Find(id);
-        if(employee is null){
-            return NotFound();
+    public IActionResult DeleteEmp(int id)
+    {
+        var result = _empService.DeleteEmp(id);
+        if (result)
+        {
+            return Ok();
         }
-        dbContext.Employees.Remove(employee);
-        dbContext.SaveChanges();
-
-        return Ok();
+        return NotFound();
     }
 
 }
